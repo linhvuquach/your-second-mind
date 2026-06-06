@@ -46,8 +46,18 @@ Tiago Forte's *Building a Second Brain* (BASB) defines the CODE loop as "a 4-ste
 
 ```
 SecondBrain/
-├── CLAUDE.md                     # Agent instructions (root)
+├── CLAUDE.md                     # Agent schema for Claude Code
+├── .cursorrules                  # Agent schema for Cursor
+├── AGENTS.md                     # Agent schema for Codex (optional)
 ├── README.md                     # Vault index / dashboard for humans
+├── index.md                      # LLM-maintained page catalog (see Section 4, Pattern E)
+├── log.md                        # LLM-maintained activity log (append-only)
+├── raw/                          # IMMUTABLE source documents — LLM reads, never modifies
+│   ├── articles/
+│   ├── books/
+│   ├── videos/
+│   ├── podcasts/
+│   └── assets/                   # Downloaded images (set as Obsidian attachment folder)
 ├── 00-Inbox/                     # Fleeting captures, unprocessed
 ├── 10-Daily/                     # Daily notes (YYYY-MM-DD.md)
 ├── 20-Projects/                  # Active, time-bound outcomes
@@ -58,7 +68,7 @@ SecondBrain/
 │   ├── area-health/
 │   ├── area-finances/
 │   └── area-relationships/
-├── 40-Resources/                 # Reference + evergreen knowledge
+├── 40-Resources/                 # Reference + evergreen knowledge (wiki layer)
 │   ├── tech/
 │   │   ├── languages/
 │   │   ├── system-design/
@@ -78,6 +88,8 @@ SecondBrain/
 ```
 
 The numeric prefixes are a Johnny-Decimal-lite touch — they keep the file explorer in deterministic order without committing to the full JD discipline.
+
+**Two-layer model (Karpathy).** The vault has a clear split: `raw/` is the source-of-truth layer (immutable files the LLM reads but never modifies) and the PARA folders (`40-Resources/`, `50-Slipbox/`, `60-MOCs/`) are the wiki layer the LLM owns and maintains. `index.md` is the LLM's navigation catalog across the wiki; `log.md` is its append-only activity record. See Section 4, Pattern E for the full workflow.
 
 ### Note types and templates
 
@@ -223,14 +235,26 @@ Linh, a software engineer. I work mostly on backend systems and developer
 tools. I write in English. I am terse and prefer bullets over prose.
 
 ## What this vault is
-A PARA-structured second brain with a Zettelkasten slipbox.
+A PARA-structured second brain with a Zettelkasten slipbox and an LLM-maintained
+wiki layer. You are the wiki maintainer — not just a helper.
+
+## Two-layer model
+- `raw/` — IMMUTABLE source documents. Read from here; never modify or delete.
+  - `raw/articles/`, `raw/books/`, `raw/videos/`, `raw/podcasts/`, `raw/assets/`
+- Wiki layer (you maintain): `40-Resources/`, `50-Slipbox/`, `60-MOCs/`
+
+## Special files (keep current)
+- `index.md` — page catalog. Read this first when answering any query to find
+  relevant pages. Update it after every ingest (add new pages) or lint (remove orphans).
+- `log.md` — append-only activity record. After every ingest, query that produces
+  a new page, or lint pass, append: `## [YYYY-MM-DD] <operation> | <title>`.
 
 ## Folder map
 - `00-Inbox/` — Raw captures. Triage during weekly review.
 - `10-Daily/` — Daily journal. Filename `YYYY-MM-DD.md`.
 - `20-Projects/` — Active projects. Each has `_index.md` you should read first.
 - `30-Areas/` — Ongoing responsibilities.
-- `40-Resources/` — Reference + learning.
+- `40-Resources/` — Reference + learning (wiki layer).
 - `50-Slipbox/` — Atomic evergreen notes. Title is a full-sentence claim.
 - `60-MOCs/` — Hand-curated index notes.
 - `70-People/` — One file per person.
@@ -245,22 +269,36 @@ Allowed `type`: fleeting, daily, lit, evergreen, project, area, moc, person.
 Allowed `status`: seedling, budding, evergreen.
 
 ## How I want you to work
+- Read `index.md` first before answering any non-trivial query.
 - Read `_index.md` (or `README.md`) in any folder before touching files in it.
 - Wikilinks use `[[Note title]]`. Always check that the target exists; if not, ask.
 - Tags use kebab-case. Don't invent new top-level tags.
 - Prefer linking over tagging.
-- Never modify anything in `80-Archive/`.
-- When you create or delete a file, update the relevant `_index.md`.
+- Never modify anything in `80-Archive/` or `raw/`.
+- When you create or delete a file, update the relevant `_index.md` and `index.md`.
 - At the end of every session, write a summary to `90-Meta/AI-Sessions/YYYY-MM-DD-<topic>.md`.
+- File good query answers back as new wiki pages — don't let valuable synthesis
+  disappear into chat history.
+
+## Ingest workflow
+When I say "ingest <file>":
+1. Read the source in `raw/`.
+2. Discuss key takeaways with me.
+3. Write a summary page in `40-Resources/learning/`.
+4. Update any relevant entity or concept pages in `50-Slipbox/` and `60-MOCs/`.
+5. Update `index.md` with the new pages.
+6. Append to `log.md`: `## [YYYY-MM-DD] ingest | <title>`.
 
 ## Things I commonly ask
 - "Triage my inbox" — read `00-Inbox/`, propose where each item belongs,
   ask before moving.
+- "Ingest <file>" — process a source through the ingest workflow above.
 - "Process this week" — summarize my daily notes from the last 7 days into
   this week's weekly note in `10-Daily/`.
 - "Find knowledge gaps in <topic>" — scan related notes and propose what's
   missing.
 - "Generate an MOC for <topic>" — propose a draft MOC in `60-MOCs/`.
+- "Lint the wiki" — health-check for contradictions, orphans, stale claims.
 ```
 
 **Key Claude Code workflows seen in the wild:**
@@ -283,6 +321,58 @@ Because notes are just markdown, Cursor can open the vault as a workspace and us
 - A frequently reported win: answering long support/customer emails by pulling context from years of prior support notes — something base ChatGPT cannot do because it has no access to your history.
 
 Cursor is great for *writing-with-AI inside notes*. Claude Code is great for *agentic batch work across the vault*. Many users run both.
+
+**The `.cursorrules` schema.** Cursor reads `.cursorrules` at the project root as its system prompt — the Cursor equivalent of `CLAUDE.md`. Keep the two files in sync: same folder map, same frontmatter contract, same ingest workflow. The format is plain text (no special syntax). A working template:
+
+```
+# .cursorrules — Second Brain (Cursor)
+
+## Vault overview
+PARA + Zettelkasten slipbox. You are the wiki maintainer.
+Raw sources live in raw/ (immutable). The wiki layer is 40-Resources/,
+50-Slipbox/, 60-MOCs/ — you own and maintain these.
+
+## Special files
+- index.md: page catalog. Read first on every query to find relevant pages.
+  Update after every ingest.
+- log.md: append-only log. Append after every ingest/lint/significant query.
+  Format: ## [YYYY-MM-DD] <operation> | <title>
+
+## Folder map
+raw/articles/, raw/books/, raw/videos/, raw/podcasts/, raw/assets/ — NEVER MODIFY
+00-Inbox/ — unprocessed captures
+10-Daily/ — daily notes (YYYY-MM-DD.md)
+20-Projects/ — active projects (each has _index.md)
+30-Areas/ — ongoing responsibilities
+40-Resources/ — reference + learning
+50-Slipbox/ — atomic notes (title = full-sentence claim)
+60-MOCs/ — hand-curated indexes
+70-People/ — one file per person
+80-Archive/ — read-only history, never modify
+90-Meta/Templates/ — use when creating notes
+
+## Frontmatter
+created, updated, type, tags[], status, related[]
+type: fleeting | daily | lit | evergreen | project | area | moc | person
+status: seedling | budding | evergreen
+
+## Rules
+- @index.md before answering non-trivial queries
+- Read _index.md in any folder before touching files in it
+- Wikilinks: [[Note title]]. Check target exists first.
+- Never touch raw/ or 80-Archive/
+- Update index.md and _index.md when creating/deleting files
+- File valuable query answers back as new wiki pages
+- End sessions: write summary to 90-Meta/AI-Sessions/YYYY-MM-DD-topic.md
+
+## Ingest workflow (when asked to ingest <file>)
+1. Read source in raw/
+2. Discuss key takeaways
+3. Write summary in 40-Resources/learning/
+4. Update entity/concept pages in 50-Slipbox/ and 60-MOCs/
+5. Update index.md
+6. Append to log.md
+```
 
 ### Pattern D — Obsidian-native AI plugins
 
@@ -318,6 +408,94 @@ Then install Copilot or Smart Composer or Smart Connections, point them at `http
 - First index on 5000+ notes can take 30–60 minutes; incremental after.
 
 Set `OLLAMA_KEEP_ALIVE=30m` and bump `num_ctx` (e.g., 8192) for better throughput.
+
+### Pattern E — LLM Wiki (Karpathy pattern)
+
+> Source: [Andrej Karpathy's LLM Wiki gist](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)
+
+The patterns above treat the vault as a passive store the LLM queries. The LLM Wiki pattern is different: **the LLM incrementally builds and maintains a persistent, structured wiki** between you and your raw sources. Knowledge is compiled once and kept current — not re-derived on every query.
+
+**The key insight:** most RAG systems (NotebookLM, ChatGPT file uploads) re-discover knowledge from scratch on every question. Ask a subtle question requiring synthesis of five sources and the LLM has to find and piece together fragments every time. The LLM Wiki pre-compiles that synthesis and keeps it updated. The cross-references are already there. The contradictions have already been flagged. Ask the same question in 6 months and you get a richer answer, not a cold start.
+
+#### Three layers
+
+| Layer | Contents | Who owns it |
+|---|---|---|
+| **Raw sources** | Immutable input documents in `raw/` — articles, papers, books, exports. Source of truth. | Human (curates); LLM reads only |
+| **The wiki** | `40-Resources/`, `50-Slipbox/`, `60-MOCs/` — summaries, entity pages, concept pages, comparisons, MOCs | LLM writes and maintains |
+| **The schema** | `CLAUDE.md` / `.cursorrules` — conventions, folder map, workflow instructions. The config file that makes the LLM a disciplined wiki maintainer | Human + LLM co-evolve |
+
+#### Three operations
+
+**Ingest** — when you add a new source:
+
+```
+"Ingest raw/articles/distributed-systems-paper.md.
+Discuss key takeaways with me, then:
+- Write a summary page in 40-Resources/learning/
+- Update any relevant entity or concept pages in 50-Slipbox/ and 60-MOCs/
+- Update index.md with the new pages
+- Append to log.md: ## [2026-06-06] ingest | <title>"
+```
+
+One source typically touches 5–15 wiki pages. Ingest one at a time and stay involved — read the summaries, check the updates, guide emphasis. Or batch-ingest with less supervision; your call.
+
+**Query** — when you want to know something:
+
+```
+"Read index.md to find relevant pages, then answer:
+<your question>.
+If the answer is valuable, propose a new wiki page to file it as."
+```
+
+The important insight: **good answers can be filed back as new wiki pages.** A comparison you asked for, an analysis, a discovered connection — these compound in the knowledge base just like ingested sources do.
+
+**Lint** — periodic health-check (monthly):
+
+```
+"Health-check the wiki. Look for:
+- Contradictions between pages
+- Stale claims that newer sources have superseded
+- Orphan pages with no inbound links
+- Important concepts mentioned but lacking their own page
+- Missing cross-references
+- Data gaps that could be filled with a web search"
+```
+
+#### Two special files
+
+**`index.md`** — content-oriented. A catalog of every wiki page: link, one-line summary, optional metadata (date, source count). Organized by category. The LLM reads this first when answering any query to find relevant pages before drilling in. Works well at moderate scale (~100 sources, hundreds of pages) — no embedding infrastructure needed.
+
+**`log.md`** — chronological. Append-only record of every ingest, query-that-produced-a-page, and lint pass. Each entry starts with a consistent prefix so it's parseable:
+
+```bash
+grep "^## \[" log.md | tail -5   # last 5 entries
+```
+
+Format: `## [YYYY-MM-DD] ingest | Article Title`
+
+#### Obsidian as the IDE
+
+In practice: LLM agent open on one side, Obsidian open on the other. The LLM makes edits; you browse results in real time — following links, checking the graph view, reading updated pages. Obsidian is the IDE; the LLM is the programmer; the wiki is the codebase.
+
+#### At scale: search tooling
+
+At small scale `index.md` is enough. As the wiki grows past ~200 pages, consider [qmd](https://github.com/tobi/qmd) — a local markdown search engine with hybrid BM25/vector search and LLM re-ranking. It has both a CLI (Claude Code can shell out) and an MCP server (for Claude Desktop). The LLM can help you set it up when the need arises.
+
+#### vs RAG
+
+| | RAG | LLM Wiki |
+|---|---|---|
+| Knowledge accumulates | No — re-derived each query | Yes — compiled once, kept current |
+| Handles multi-source synthesis | Weak | Strong (cross-refs pre-built) |
+| Infrastructure needed | Embedding model + vector DB | Just markdown + git |
+| Scales to | Hundreds of sources well; thousands with chunking | ~100–500 sources comfortably |
+| Human role | Ask questions | Curate sources, ask questions |
+| LLM role | Retrieve and answer | Maintain wiki AND answer |
+
+Use RAG (Smart Connections, Copilot Vault QA) for *always-on* ambient retrieval. Use LLM Wiki for *deep domains* where you want compounding synthesis over weeks or months.
+
+---
 
 ### RAG over the vault — how it actually works
 
@@ -365,6 +543,40 @@ Prompt: "Show me notes in 50-Slipbox/ created this week. For each, suggest
 
 ## Step 5 — Plan next week
 Three priorities. One project I'll close. One person I'll reach out to.
+```
+
+### The Ingest → Query → Lint loop (Karpathy pattern)
+
+Complement the capture→process loop with an LLM Wiki maintenance cycle:
+
+**Ingest** (when you add a source to `raw/`)
+
+1. Drop source in `raw/articles/` (or appropriate subfolder). Never edit it after.
+2. Prompt Claude Code or Cursor:
+   ```
+   Ingest raw/articles/<filename>. Discuss key takeaways with me, then:
+   write a summary page in 40-Resources/learning/, update any relevant entity
+   or concept pages in 50-Slipbox/ and 60-MOCs/, update index.md,
+   append to log.md.
+   ```
+3. One source typically touches 5–15 wiki pages. Stay involved — read summaries, guide emphasis.
+
+**Query** (when you want to know something)
+
+```
+Read index.md to find relevant pages, then answer: <question>.
+If the answer is valuable, propose a new wiki page to file it back.
+```
+
+Good answers compound. Don't let valuable synthesis disappear into chat history.
+
+**Lint** (monthly health-check)
+
+```
+Health-check the wiki. Find: contradictions between pages, stale claims
+that newer sources have superseded, orphan pages with no inbound links,
+important concepts mentioned but lacking their own page, missing
+cross-references, data gaps that a web search could fill.
 ```
 
 ### Using AI to suggest links between notes
@@ -465,17 +677,17 @@ The cost: you lose the "thinking" benefit of writing. Notes become dead text ret
 
 ### 7-day starter plan
 
-- **Day 1** — Install Obsidian. Create the PARA + Slipbox folder skeleton above. Install the core plugins (Periodic Notes, Templater, Dataview, QuickAdd, Tasks, Calendar). Set up daily note template. Commit vault to git.
-- **Day 2** — Write your first daily note. Capture 5 things to inbox. Don't process yet.
-- **Day 3** — Install Obsidian Web Clipper. Clip 3 articles. Install Readwise if you read on mobile.
+- **Day 1** — Install Obsidian. Create the PARA + Slipbox folder skeleton above (including `raw/`). Install the core plugins (Periodic Notes, Templater, Dataview, QuickAdd, Tasks, Calendar). Set up daily note template. Create `.gitignore` (exclude `workspace.json` and `.trash/`). Commit vault to git.
+- **Day 2** — Write your first daily note. Capture 5 things to inbox. Drop 1 article into `raw/articles/`. Don't process yet.
+- **Day 3** — Install Obsidian Web Clipper. Clip 3 articles into `raw/articles/`. Install Readwise if you read on mobile. In Obsidian Settings → Files and links, set Attachment folder = `raw/assets/`.
 - **Day 4** — Install Smart Connections. Let it index. Open a few notes and watch related-notes appear.
-- **Day 5** — Write `CLAUDE.md` at the vault root (use the template from Section 4). Install Claude Code, `cd` into vault, run `claude`, ask it to generate `_index.md` files for each folder.
-- **Day 6** — First inbox triage with Claude Code's help. Promote 1 idea from inbox into a slipbox note. Write it as a full-sentence claim.
-- **Day 7** — First weekly review. Use the script in Section 5. Adjust `CLAUDE.md` based on what you noticed.
+- **Day 5** — Write `CLAUDE.md` and `.cursorrules` at the vault root (use the templates from Section 4). Seed `index.md` (empty catalog with category headers) and `log.md` (first entry). Install Claude Code, `cd` into vault, run `claude`, ask it to generate `_index.md` files for each folder.
+- **Day 6** — First inbox triage with Claude Code's help. Promote 1 idea from inbox into a slipbox note. Try the first ingest: *"Ingest raw/articles/<one of your clipped articles>."* Watch it populate the wiki.
+- **Day 7** — First weekly review. Use the script in Section 5. Adjust `CLAUDE.md` and `.cursorrules` based on what you noticed.
 
 ### 30-day expansion plan
 
-- **Week 2** — Add an AI plugin (Copilot or Smart Composer). Decide on one. Set up at least one Templater template for literature notes. Start clipping articles into proper literature notes.
+- **Week 2** — Add an AI plugin (Copilot or Smart Composer). Decide on one. Set up at least one Templater template for literature notes. Try the full ingest workflow with 3 sources from `raw/`. Check `index.md` and `log.md` after each ingest — these are your signal that the wiki layer is growing.
 - **Week 3** — Pick a sync strategy and commit. If git: add obsidian-git for auto-commit. Set up mobile (Obsidian Mobile + share-sheet capture). Wire up one MOC by hand for a topic you care about.
 - **Week 4** — Try an MCP server (start with `obsidian-mcp-tools` for semantic search) if you want Claude Desktop integration. Set up spaced repetition tags. Run a "knowledge gap" prompt over one of your MOCs. Decide whether to add Ollama for local/private chat. Audit your tag taxonomy.
 
@@ -489,6 +701,7 @@ By day 30 you should have: ~20 daily notes, 5–15 literature notes, 10–30 ato
 
 ## Sources
 
+- [LLM Wiki (Andrej Karpathy)](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) — The LLM Wiki pattern: persistent, LLM-maintained wiki with raw/wiki/schema layers and Ingest/Query/Lint operations. The basis for Pattern E and the `raw/` + `index.md` + `log.md` additions in this guide.
 - [Building a Second Brain (official site)](https://www.buildingasecondbrain.com/) — Authoritative definition of the CODE framework and PARA method.
 - [MOCs vs Zettelkasten — 80/20 thread (Obsidian Forum)](https://forum.obsidian.md/t/mocs-vs-zettelkasten-an-80-20-approach-for-those-of-us-who-arent-luhmann/106518) — Community consensus on combining MOCs with PARA instead of strict Zettelkasten.
 - [Johnny Decimal in Obsidian (Shuvangkar Das)](https://blog.shuvangkardas.com/johnny-decimal-obsidian-organization-method/) — Concrete Johnny Decimal layout with examples and category map.
