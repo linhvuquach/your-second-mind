@@ -39,15 +39,15 @@ In the extension settings:
 |---|---|
 | Vault | `second-brain` |
 | Default folder | `00-Inbox/` |
-| Note name | `{{date:YYYY-MM-DD}} {{title}}` |
+| Note name | `{{published}} {{title}}` |
 | Template | see below |
 
 **Clip template (paste into extension settings):**
 
 ```
 ---
-created: {{date:YYYY-MM-DD}}
-updated: {{date:YYYY-MM-DD}}
+created: {{date}}
+updated: {{date}}
 type: fleeting
 tags: []
 status: seedling
@@ -57,7 +57,7 @@ author: {{author}}
 
 # {{title}}
 
-{{highlights}}
+{{content}} or {{highlights}}
 ```
 
 ### How to use
