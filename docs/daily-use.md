@@ -224,6 +224,8 @@ that now have cross-references to `status: budding`.
 **Step 5 — Plan next week**
 Three priorities. One project to close. One person to reach out to.
 
+Refer to the [weekly-review.md](../.claude/commands/weekly-review.md) file for more details. This is also a re-usable command that can be used to review the weekly review.
+
 ---
 
 ## Monthly lint (30 min, once a month)
@@ -238,6 +240,7 @@ but without their own page.
 
 Fix issues immediately or add them to `00-Inbox/` for the next weekly review.
 
+Refer to the [monthly-lint.md](../.claude/commands/monthly-lint.md) file for more details. This is also a re-usable command that can be used to lint the wiki.
 ---
 
 ## The compounding model
