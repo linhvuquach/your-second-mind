@@ -1,0 +1,25 @@
+---
+type: area
+created: {{DATE}}
+updated: {{DATE}}
+tags: []
+---
+
+# {{FOLDER_NAME}}
+
+> **Path:** `{{FOLDER_PATH}}`
+> **Purpose:** {{FOLDER_PURPOSE}}
+> **Agent instruction:** {{FOLDER_AGENT_INSTRUCTION}}
+
+## Contents
+
+```dataview
+LIST
+FROM "{{FOLDER_PATH}}"
+WHERE file.name != "_index"
+SORT file.ctime DESC
+```
+
+## Notes
+
+<!-- Add notes about this folder here -->

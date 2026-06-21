@@ -1,0 +1,66 @@
+# Second Brain — Vault Dashboard
+
+A PARA + Zettelkasten personal knowledge vault, maintained with AI agents.
+Scaffolded on {{DATE}} with `npx your-second-mind@latest`.
+
+## Quick start (Day 2+)
+
+```bash
+cd {{VAULT_PATH}}
+claude   # opens Claude Code with CLAUDE.md loaded
+```
+
+Or in Cursor: `cursor {{VAULT_PATH}}`
+
+## Folder overview
+
+| Folder | Purpose |
+|---|---|
+| `raw/` | Immutable source documents — never modified by agents |
+| `00-Inbox/` | Unprocessed captures — triage weekly |
+| `10-Daily/` | Daily notes `YYYY-MM-DD.md` |
+| `20-Projects/` | Active, time-bound projects |
+| `30-Areas/` | Ongoing responsibilities |
+| `40-Resources/` | Reference + learning wiki |
+| `50-Slipbox/` | Atomic evergreen notes (full-sentence titles) |
+| `60-MOCs/` | Maps of Content — hand-curated indexes |
+| `70-People/` | CRM-style person notes |
+| `80-Archive/` | Inactive / historical — read-only |
+| `90-Meta/` | Templates, attachments, AI session logs |
+
+## Agent entry points
+
+- **Claude Code**: reads `CLAUDE.md` at session start
+- **Cursor**: reads `.cursorrules` at session start
+- **Codex**: reads `AGENTS.md` at session start
+
+Active agents in this vault: {{AGENTS_USED}}
+
+## Key files
+
+- `index.md` — LLM-maintained page catalog; read before any query
+- `log.md` — append-only activity record
+- `agents-workflow/` — portable agent commands (weekly-review, monthly-lint)
+
+## Common agent prompts
+
+```
+Triage my inbox
+Ingest raw/<source>/<filename>
+Process this week
+Find knowledge gaps in <topic>
+Generate an MOC for <topic>
+Lint the wiki
+```
+
+## Day 2 checklist
+
+- [ ] Write your first daily note (`10-Daily/{{DATE}}.md`)
+- [ ] Capture 5 things to `00-Inbox/`
+- [ ] Drop 1 article into `raw/`
+- [ ] Set attachment folder to `raw/` in Obsidian Settings → Files and links
+- [ ] Install Obsidian core plugins:
+{{PLUGINS_CORE}}
+- [ ] Install Obsidian AI plugins:
+{{PLUGINS_AI}}
+- [ ] Copy agent commands from `agents-workflow/` — see `agents-workflow/README.md`

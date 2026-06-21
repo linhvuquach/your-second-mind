@@ -21,27 +21,38 @@ description: Define testing approach, test cases, and quality assurance
 
 ## Unit Tests (`test/unit/`, vitest)
 
-### `render.test.ts`
-- [ ] Replaces single `{{NAME}}` with the provided value
-- [ ] Replaces multiple distinct variables in one string
-- [ ] Leaves unrecognized `{{OTHER}}` unchanged (no throw)
-- [ ] Works across multi-line template content
+### `render.test.ts` ✅ 6 tests passing (M2)
+- [x] Replaces single `{{NAME}}` with the provided value
+- [x] Replaces multiple distinct variables in one string
+- [x] Replaces same variable appearing more than once
+- [x] Leaves unrecognized `{{OTHER}}` unchanged (no throw)
+- [x] Handles empty vars map
+- [x] Handles content with no placeholders
 
-### `variables.test.ts`
-- [ ] `{{AREAS_LIST}}` → `- area-health\n- area-finance` (prefixed `area-`)
-- [ ] `{{AREAS_FOLDERS}}` → `30-Areas/area-health/\n30-Areas/area-finance/`
-- [ ] `{{RAW_SOURCES_LIST}}` → `raw/articles/, raw/books/`
-- [ ] `{{AGENTS_USED}}` maps `claude-code`→`Claude Code`, `cursor`→`Cursor`, `codex`→`Codex`
-- [ ] `{{DATE}}` uses the **injected** date arg (deterministic; no hidden `new Date()`)
-- [ ] `{{PLUGINS_CORE}}` / `{{PLUGINS_AI}}` render as bullet lists
+### `variables.test.ts` ✅ 15 tests passing (M2)
+- [x] `{{AREAS_LIST}}` → `- area-research\n- area-teaching` (prefixed `area-`)
+- [x] `{{AREAS_FOLDERS}}` → `30-Areas/area-research/\n30-Areas/area-teaching/`
+- [x] `{{RAW_SOURCES_LIST}}` → `raw/papers/, raw/datasets/`
+- [x] `{{AGENTS_USED}}` maps `claude-code`→`Claude Code`, `cursor`→`Cursor`, `codex`→`Codex`
+- [x] `{{DATE}}` uses the **injected** date arg (deterministic; no hidden `new Date()`)
+- [x] `{{PLUGINS_CORE}}` / `{{PLUGINS_AI}}` render as bullet lists
+- [x] Single agent maps correctly
+- [x] All values are plain strings (no non-string types in Record)
 
-### `config.test.ts`
-- [ ] `DEFAULTS` match the requirements table (role, language, vault_path, areas, raw_sources, agents, gitInit)
-- [ ] `resolve()` precedence: defaults ← flags ← prompt answers (answer wins over flag wins over default)
-- [ ] `resolve()` expands `~` in `vaultPath` via `os.homedir()`
-- [ ] `validate()` throws `ConfigError` mentioning the field for: empty `name`, empty `areas`, empty `agents`
-- [ ] `validate()` throws listing valid options for an invalid agent (e.g. `vim`)
-- [ ] Minimal valid config passes without throwing
+### `config.test.ts` ✅ 21 tests passing (M2)
+- [x] `DEFAULTS` match the requirements table (role, language, vault_path, areas, raw_sources, agents, gitInit)
+- [x] `resolve()` returns all defaults when called with empty objects
+- [x] `resolve()` precedence: defaults ← flags ← prompt answers (answer wins over flag wins over default)
+- [x] `resolve()` expands `~` in `vaultPath` via `os.homedir()`
+- [x] `resolve()` expands `~` in custom vault path from flags
+- [x] `resolve()` does not expand `~` when path is already absolute
+- [x] `resolve()` ignores undefined flag values (does not clobber defaults)
+- [x] `validate()` throws `ConfigError` for empty `name`
+- [x] `validate()` throws `ConfigError` for whitespace-only `name`
+- [x] `validate()` throws `ConfigError` for empty `areas`
+- [x] `validate()` throws `ConfigError` for empty `agents`
+- [x] `validate()` throws `ConfigError` for unrecognised agent string
+- [x] Minimal valid config passes without throwing
 
 ### `args.test.ts`
 - [ ] Parses booleans (`--yes`, `--dry-run`, `--force`, `--no-git`) and strings (`--name`, `--vault-path`)

@@ -1,0 +1,71 @@
+# CLAUDE.md — Second Brain Operating Manual
+
+## Who I am
+{{NAME}}, a {{ROLE}}. I write in {{LANGUAGE}}. My writing style: {{WRITING_STYLE}}.
+
+## What this vault is
+A PARA-structured second brain with a Zettelkasten slipbox and an LLM-maintained
+wiki layer. You are the wiki maintainer — not just a helper.
+
+## Two-layer model
+- `raw/` — IMMUTABLE source documents. Read from here; never modify or delete.
+  - {{RAW_SOURCES_LIST}}
+- Wiki layer (you maintain): `40-Resources/`, `50-Slipbox/`, `60-MOCs/`
+
+## Special files (keep current)
+- `index.md` — page catalog. Read this first when answering any query to find
+  relevant pages. Update it after every ingest (add new pages) or lint (remove orphans).
+- `log.md` — append-only activity record. After every ingest, query that produces
+  a new page, or lint pass, append: `## [YYYY-MM-DD] <operation> | <title>`.
+
+## Folder map
+- `00-Inbox/` — Raw captures. Triage during weekly review.
+- `10-Daily/` — Daily journal. Filename `YYYY-MM-DD.md`.
+- `20-Projects/` — Active projects. Each has `_index.md` you should read first.
+- `30-Areas/` — Ongoing responsibilities. Your configured areas:
+{{AREAS_LIST}}
+- `40-Resources/` — Reference + learning (wiki layer).
+- `50-Slipbox/` — Atomic evergreen notes. Title is a full-sentence claim.
+- `60-MOCs/` — Hand-curated index notes.
+- `70-People/` — One file per person.
+- `80-Archive/` — Read-only history. Do not modify.
+- `90-Meta/Templates/` — Templates. Use these when creating notes.
+- `90-Meta/AI-Sessions/` — Write your session summaries here.
+
+## Frontmatter contract
+Every non-daily note has YAML frontmatter:
+  created, updated, type, tags[], status, related[]
+Allowed `type`: fleeting, daily, lit, evergreen, project, area, moc, person.
+Allowed `status`: seedling, budding, evergreen.
+
+## How I want you to work
+- Read `index.md` first before answering any non-trivial query.
+- Read `_index.md` (or `README.md`) in any folder before touching files in it.
+- Wikilinks use `[[Note title]]`. Always check that the target exists; if not, ask.
+- Tags use kebab-case. Don't invent new top-level tags.
+- Prefer linking over tagging.
+- Never modify anything in `80-Archive/` or `raw/`.
+- When you create or delete a file, update the relevant `_index.md` and `index.md`.
+- At the end of every session, write a summary to `90-Meta/AI-Sessions/YYYY-MM-DD-<topic>.md`.
+- File good query answers back as new wiki pages — don't let valuable synthesis
+  disappear into chat history.
+
+## Ingest workflow
+When I say "ingest <file>":
+1. Read the source in `raw/`.
+2. Discuss key takeaways with me.
+3. Write a summary page in `40-Resources/learning/`.
+4. Update any relevant entity or concept pages in `50-Slipbox/` and `60-MOCs/`.
+5. Update `index.md` with the new pages.
+6. Append to `log.md`: `## [YYYY-MM-DD] ingest | <title>`.
+
+## Things I commonly ask
+- "Triage my inbox" — read `00-Inbox/`, propose where each item belongs,
+  ask before moving.
+- "Ingest <file>" — process a source through the ingest workflow above.
+- "Process this week" — summarize my daily notes from the last 7 days into
+  this week's weekly note in `10-Daily/`.
+- "Find knowledge gaps in <topic>" — scan related notes and propose what's
+  missing.
+- "Generate an MOC for <topic>" — propose a draft MOC in `60-MOCs/`.
+- "Lint the wiki" — health-check for contradictions, orphans, stale claims.

@@ -1,0 +1,51 @@
+---
+created: <% tp.date.now("YYYY-MM-DD") %>
+updated: <% tp.date.now("YYYY-MM-DD") %>
+type: daily
+tags: [weekly-review]
+---
+
+# Weekly Review — week of <% tp.date.now("YYYY-MM-DD") %>
+
+## Step 1 — Review daily notes
+
+Prompt to Claude Code:
+```
+Read 10-Daily/<monday>.md through <sunday>.md.
+Produce a markdown summary with sections: What I shipped, Decisions
+made, Open loops, People I owe something, Things I learned.
+Then list any TODOs that I marked done so I can celebrate them.
+```
+
+**Summary:**
+
+## Step 2 — Project sweep
+
+For each folder in `20-Projects/`: open `_index.md`, mark status (active/blocked/done/archive), update next action.
+
+| Project | Status | Next Action |
+|---|---|---|
+| | | |
+
+## Step 3 — Inbox to zero
+
+Empty `00-Inbox/`. Each item: deleted, filed, or promoted.
+
+- [ ] Inbox empty
+
+## Step 4 — Slipbox grooming
+
+Prompt:
+```
+Show me notes in 50-Slipbox/ created this week. For each, suggest
+3 existing slipbox notes it should link to, based on semantic similarity.
+```
+
+## Step 5 — Plan next week
+
+- Three priorities:
+  1.
+  2.
+  3.
+- One project I'll close:
+- One person I'll reach out to:

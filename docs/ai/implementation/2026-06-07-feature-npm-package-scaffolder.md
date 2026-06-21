@@ -35,6 +35,24 @@ node dist/cli.js --dry-run --name Alice   # local smoke run
   skeleton has no tests (added in Phase 2+), set `test.passWithNoTests: true` in
   `vitest.config.ts` to keep `npm test` / CI green; the real suites land before publish.
 
+**Template extraction decisions (M3):**
+- **`{{AREAS_LIST}}` used (not `{{AREAS_FOLDERS}}`)** in schema files (CLAUDE.md, cursorrules,
+  AGENTS.md). The `AREAS_LIST` bullet format (`- area-x`) reads more naturally than the
+  folder-path format in prose sections of those files. `AREAS_FOLDERS` is reserved for the
+  scaffold writer when generating `_index.md` per folder.
+- **Note templates are `.md.tmpl` and copied verbatim** — they use Templater `<% %>` syntax
+  (not `{{VAR}}` scaffolder vars), so `renderTemplate` is never called on them; they ship
+  as-is and Obsidian's Templater plugin resolves the `<% %>` at note-creation time.
+- **Command files (`agents-workflow/*.md`) copied verbatim** — `$CURRENT_DATE`/`$ARGUMENTS`
+  are agent-runtime variables that must not be substituted by the scaffolder. Confirmed
+  preserved in T3.10 copy.
+- **`templates/vault/_index.md.tmpl` uses per-folder vars** (`{{FOLDER_NAME}}`,
+  `{{FOLDER_PATH}}`, `{{FOLDER_PURPOSE}}`, `{{FOLDER_AGENT_INSTRUCTION}}`) — these are NOT
+  in `buildVariables`; they are injected by the scaffold writer (T4.3) once per top-level
+  folder using the `FOLDER_META` lookup table.
+- **Personal-value scan enforced:** `grep -r "Linh\|linhvuquach\|engineering-craft" templates/`
+  confirmed CLEAN before commit.
+
 ## Code Structure
 
 ```

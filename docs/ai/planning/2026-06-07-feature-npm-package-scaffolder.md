@@ -13,16 +13,16 @@ description: Break down work into actionable tasks and estimate timeline
 
 ## Status at a glance
 
-- **Done:** M1 (Project scaffold) — completed 2026-06-21; M2 (Pure core) — completed 2026-06-21
+- **Done:** M1 (Project scaffold) — 2026-06-21; M2 (Pure core) — 2026-06-21; M3 (Templates) — 2026-06-21
 - **In progress:** none
 - **Blocked:** none
-- **Not started:** M3–M8 below
+- **Not started:** M4–M8 below
 
 ## Milestones
 
 - [x] **M1 — Project scaffold:** `package.json` (bin, ESM, engines, files), `tsconfig`, `tsup`, `vitest`, `src/`+`templates/`+`test/` skeleton
 - [x] **M2 — Pure core:** `config.ts`, `variables.ts`, `render.ts` + unit tests (no FS)
-- [ ] **M3 — Templates extracted & parameterized:** schemas, vault, notes (6), `agents-workflow/` (2 commands + README)
+- [x] **M3 — Templates extracted & parameterized:** schemas, vault, notes (6), `agents-workflow/` (2 commands + README)
 - [ ] **M4 — Scaffold writer:** dir creation + idempotent/force/dry-run file writing → `ScaffoldResult`
 - [ ] **M5 — CLI surface:** `args.ts`, `prompts.ts`, `cli.ts`, `git.ts`, `ui.ts`
 - [ ] **M6 — Integration tests:** tmp-dir scaffold, no-`{{`-leak, personalization, partial-agents, dry-run, force
@@ -44,19 +44,20 @@ description: Break down work into actionable tasks and estimate timeline
 - [x] T2.3 `render.ts`: `renderTemplate(content, vars)` — replaceAll loop; unknown `{{X}}` left intact
 - [x] T2.4 Unit tests: 42 tests across render (6), config (21), variables (15) — all pass; TDD order
 
-### Phase 3 — Templates (M3)
-Extract from the working vault; replace personal values with `{{VARIABLE}}`.
-- [ ] T3.1 `templates/schemas/CLAUDE.md.tmpl` (`Linh`→`{{NAME}}`, role→`{{ROLE}}`, areas→`{{AREAS_FOLDERS}}`)
-- [ ] T3.2 `templates/schemas/cursorrules.tmpl` (areas, raw sources)
-- [ ] T3.3 `templates/schemas/AGENTS.md.tmpl` (same subs)
-- [ ] T3.4 `templates/vault/README.md.tmpl` (`{{VAULT_PATH}}`, `{{PLUGINS_CORE}}`/`{{PLUGINS_AI}}`, `{{DATE}}`, Obsidian plugin checklist)
-- [ ] T3.5 `templates/vault/index.md.tmpl` (`{{DATE}}`, empty category sections)
-- [ ] T3.6 `templates/vault/log.md.tmpl` (`{{DATE}}`, one generic init entry)
-- [ ] T3.7 `templates/vault/gitignore.tmpl` (no subs)
-- [ ] T3.8 `templates/vault/_index.md.tmpl` (`{{FOLDER_NAME}}`/`{{FOLDER_PATH}}`/`{{FOLDER_PURPOSE}}`/`{{FOLDER_AGENT_INSTRUCTION}}`, Dataview stub)
-- [ ] T3.9 `templates/notes/*.md.tmpl` — all 6 (daily, lit, evergreen, project, weekly-review, ingest-session); preserve Templater syntax, no personal values
-- [ ] T3.10 `templates/agents-workflow/weekly-review.md` + `monthly-lint.md` — copy from `.claude/commands/`, verify only relative paths + `$CURRENT_DATE`/`$ARGUMENTS` (no personalization)
-- [ ] T3.11 `templates/agents-workflow/README.md` — per-agent copy guide (Claude Code `.claude/commands/`, Cursor, generic)
+### Phase 3 — Templates (M3) — ✅ done 2026-06-21
+- [x] T3.1 `templates/schemas/CLAUDE.md.tmpl` — `{{NAME}}`, `{{ROLE}}`, `{{LANGUAGE}}`, `{{WRITING_STYLE}}`, `{{RAW_SOURCES_LIST}}`, `{{AREAS_LIST}}`
+- [x] T3.2 `templates/schemas/cursorrules.tmpl` — `{{RAW_SOURCES_LIST}}`, `{{AREAS_LIST}}`
+- [x] T3.3 `templates/schemas/AGENTS.md.tmpl` — `{{RAW_SOURCES_LIST}}`, `{{AREAS_LIST}}`
+- [x] T3.4 `templates/vault/README.md.tmpl` — `{{VAULT_PATH}}`, `{{DATE}}`, `{{AGENTS_USED}}`, `{{PLUGINS_CORE}}`, `{{PLUGINS_AI}}`
+- [x] T3.5 `templates/vault/index.md.tmpl` — `{{DATE}}`; personal pages stripped, generic comment scaffolding only
+- [x] T3.6 `templates/vault/log.md.tmpl` — `{{DATE}}`; one generic init entry
+- [x] T3.7 `templates/vault/gitignore.tmpl` — no subs; `.obsidian/` + `.DS_Store` only
+- [x] T3.8 `templates/vault/_index.md.tmpl` — `{{DATE}}`, `{{FOLDER_NAME}}`, `{{FOLDER_PATH}}`, `{{FOLDER_PURPOSE}}`, `{{FOLDER_AGENT_INSTRUCTION}}`; Dataview stub
+- [x] T3.9 `templates/notes/*.md.tmpl` — all 6 (daily, lit, evergreen, project, weekly-review, ingest-session); Templater `<% %>` syntax preserved verbatim; zero personal values
+- [x] T3.10 `templates/agents-workflow/weekly-review.md` + `monthly-lint.md` — copied verbatim from `.claude/commands/`; `$CURRENT_DATE`/`$ARGUMENTS` confirmed present
+- [x] T3.11 `templates/agents-workflow/README.md` — copy guide for Claude Code, Cursor, Codex/OpenAI, and generic agents
+
+**Verification:** `grep -r "Linh\|linhvuquach\|engineering-craft" templates/` → CLEAN; 22 `{{VAR}}` placeholders all map to known variables; build + 42 tests pass.
 
 ### Phase 4 — Scaffold writer (M4)
 - [ ] T4.1 `templates.ts`: `TEMPLATES_DIR` (`fileURLToPath(new URL("../templates", import.meta.url))`), `AGENT_FILES`, `NOTE_TEMPLATES` (all 6), `NAV_FILES`, `FOLDER_META`, `COMMAND_FILES`; read helpers

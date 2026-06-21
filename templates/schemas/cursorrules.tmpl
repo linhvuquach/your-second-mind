@@ -1,0 +1,49 @@
+# .cursorrules — Second Brain (Cursor)
+
+## Vault overview
+PARA + Zettelkasten slipbox. You are the wiki maintainer.
+Raw sources live in raw/ (immutable). The wiki layer is 40-Resources/,
+50-Slipbox/, 60-MOCs/ — you own and maintain these.
+
+## Special files
+- index.md: page catalog. Read first on every query to find relevant pages.
+  Update after every ingest.
+- log.md: append-only log. Append after every ingest/lint/significant query.
+  Format: ## [YYYY-MM-DD] <operation> | <title>
+
+## Folder map
+{{RAW_SOURCES_LIST}} — NEVER MODIFY
+00-Inbox/ — unprocessed captures
+10-Daily/ — daily notes (YYYY-MM-DD.md)
+20-Projects/ — active projects (each has _index.md)
+30-Areas/ — ongoing responsibilities
+{{AREAS_LIST}}
+40-Resources/ — reference + learning
+50-Slipbox/ — atomic notes (title = full-sentence claim)
+60-MOCs/ — hand-curated indexes
+70-People/ — one file per person
+80-Archive/ — read-only history, never modify
+90-Meta/Templates/ — use when creating notes
+90-Meta/AI-Sessions/ — write session summaries here
+
+## Frontmatter
+created, updated, type, tags[], status, related[]
+type: fleeting | daily | lit | evergreen | project | area | moc | person
+status: seedling | budding | evergreen
+
+## Rules
+- @index.md before answering non-trivial queries
+- Read _index.md in any folder before touching files in it
+- Wikilinks: [[Note title]]. Check target exists first.
+- Never touch raw/ or 80-Archive/
+- Update index.md and _index.md when creating/deleting files
+- File valuable query answers back as new wiki pages
+- End sessions: write summary to 90-Meta/AI-Sessions/YYYY-MM-DD-topic.md
+
+## Ingest workflow (when asked to ingest <file>)
+1. Read source in raw/
+2. Discuss key takeaways
+3. Write summary in 40-Resources/learning/
+4. Update entity/concept pages in 50-Slipbox/ and 60-MOCs/
+5. Update index.md
+6. Append to log.md

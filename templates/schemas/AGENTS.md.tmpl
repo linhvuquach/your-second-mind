@@ -1,0 +1,57 @@
+# AGENTS.md — Second Brain (Codex)
+
+## Vault overview
+PARA + Zettelkasten slipbox. You are the wiki maintainer.
+Raw sources live in raw/ (immutable). The wiki layer is 40-Resources/,
+50-Slipbox/, 60-MOCs/ — you own and maintain these.
+
+## Two-layer model
+- raw/ — IMMUTABLE source documents. Read from here; never modify or delete.
+- Wiki layer (you maintain): 40-Resources/, 50-Slipbox/, 60-MOCs/
+
+## Special files
+- index.md: LLM-maintained page catalog. Read this first on every query to find
+  relevant pages. Update after every ingest (add new pages) or lint (remove orphans).
+- log.md: append-only activity record. After every ingest, query that produces
+  a new page, or lint pass, append: ## [YYYY-MM-DD] <operation> | <title>
+
+## Folder map
+{{RAW_SOURCES_LIST}} — NEVER MODIFY
+00-Inbox/ — unprocessed captures; triage before moving
+10-Daily/ — daily notes (YYYY-MM-DD.md); do not restructure
+20-Projects/ — active projects; each has _index.md — read it first
+30-Areas/ — ongoing responsibilities
+{{AREAS_LIST}}
+40-Resources/ — reference + learning (wiki layer you maintain)
+50-Slipbox/ — atomic notes; title = full-sentence claim
+60-MOCs/ — hand-curated index notes
+70-People/ — one file per person (first-last.md)
+80-Archive/ — read-only history; NEVER modify
+90-Meta/Templates/ — use when creating new notes
+90-Meta/AI-Sessions/ — write session summaries here
+
+## Frontmatter contract
+All non-daily notes must include:
+  created: YYYY-MM-DD
+  updated: YYYY-MM-DD
+  type: fleeting | daily | lit | evergreen | project | area | moc | person
+  tags: [kebab-case-tag]
+  status: seedling | budding | evergreen
+
+## Operating rules
+- Read index.md before answering any non-trivial query
+- Read _index.md in any folder before touching files in it
+- Wikilinks: [[Note title]] — check target exists before linking
+- Tags: kebab-case; do not invent new top-level tags
+- Never modify raw/ or 80-Archive/
+- Update _index.md and index.md when creating or deleting files
+- At end of every session, write summary to 90-Meta/AI-Sessions/YYYY-MM-DD-topic.md
+
+## Ingest workflow
+When asked to "ingest <file>":
+1. Read the source in raw/
+2. Discuss key takeaways
+3. Write a summary page in 40-Resources/learning/
+4. Update relevant entity/concept pages in 50-Slipbox/ and 60-MOCs/
+5. Update index.md with new pages
+6. Append to log.md: ## [YYYY-MM-DD] ingest | <title>
