@@ -13,15 +13,15 @@ description: Break down work into actionable tasks and estimate timeline
 
 ## Status at a glance
 
-- **Done:** M1 (Project scaffold) — completed 2026-06-21; verified via `typecheck` + `build` + `npm pack`
+- **Done:** M1 (Project scaffold) — completed 2026-06-21; M2 (Pure core) — completed 2026-06-21
 - **In progress:** none
 - **Blocked:** none
-- **Not started:** M2–M8 below
+- **Not started:** M3–M8 below
 
 ## Milestones
 
 - [x] **M1 — Project scaffold:** `package.json` (bin, ESM, engines, files), `tsconfig`, `tsup`, `vitest`, `src/`+`templates/`+`test/` skeleton
-- [ ] **M2 — Pure core:** `config.ts`, `variables.ts`, `render.ts` + unit tests (no FS)
+- [x] **M2 — Pure core:** `config.ts`, `variables.ts`, `render.ts` + unit tests (no FS)
 - [ ] **M3 — Templates extracted & parameterized:** schemas, vault, notes (6), `agents-workflow/` (2 commands + README)
 - [ ] **M4 — Scaffold writer:** dir creation + idempotent/force/dry-run file writing → `ScaffoldResult`
 - [ ] **M5 — CLI surface:** `args.ts`, `prompts.ts`, `cli.ts`, `git.ts`, `ui.ts`
@@ -38,11 +38,11 @@ description: Break down work into actionable tasks and estimate timeline
 - [x] T1.4 `vitest.config.ts` (added `passWithNoTests: true` so the empty skeleton keeps CI green until Phase 2 tests land)
 - [x] T1.5 Created `src/`, `templates/{schemas,vault,notes,agents-workflow}/`, `test/{unit,integration}/` skeleton (`.gitkeep` in empty leaves); `.gitignore` extended with `node_modules`, `dist`, `*.tsbuildinfo`. Added placeholder `src/cli.ts` (Node-version gate stub; replaced in Phase 5).
 
-### Phase 2 — Pure core + unit tests (M2)
-- [ ] T2.1 `config.ts`: `Config`/`Agent` types, `DEFAULTS` (per requirements table), `resolve(flags, answers)` (layer defaults←flags←answers, expand `~` via `os.homedir()`), `validate()` (non-empty name, ≥1 area, ≥1 valid agent) → typed `ConfigError`
-- [ ] T2.2 `variables.ts`: `buildVariables(config, date)` → `Record<string,string>` for all non-per-folder vars (NAME, ROLE, …, AREAS_*, RAW_SOURCES_LIST, AGENTS_USED, DATE, PLUGINS_*)
-- [ ] T2.3 `render.ts`: `renderTemplate(content, vars)` via `replaceAll("{{K}}", v)`; leaves unknown placeholders intact
-- [ ] T2.4 Unit tests: `render` (sub + unknown-left-intact), `variables` (lists→bullets/folders, injected date), `config` (defaults, layering precedence, `~` expansion, validation errors)
+### Phase 2 — Pure core + unit tests (M2) — ✅ done 2026-06-21
+- [x] T2.1 `config.ts`: `Config`/`Agent` types, `DEFAULTS`, `resolve(flags, answers)` (layer defaults←flags←answers, `~` expansion via `os.homedir()`), `validate()` → `ConfigError`
+- [x] T2.2 `variables.ts`: `buildVariables(config, date)` → `Record<string,string>` (all 12 non-per-folder vars)
+- [x] T2.3 `render.ts`: `renderTemplate(content, vars)` — replaceAll loop; unknown `{{X}}` left intact
+- [x] T2.4 Unit tests: 42 tests across render (6), config (21), variables (15) — all pass; TDD order
 
 ### Phase 3 — Templates (M3)
 Extract from the working vault; replace personal values with `{{VARIABLE}}`.
