@@ -1,0 +1,45 @@
+{
+  "name": "your-second-mind",
+  "version": "0.0.0",
+  "description": "Scaffold a personalized, agent-ready second-brain Obsidian vault in seconds.",
+  "type": "module",
+  "bin": {
+    "your-second-mind": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "templates"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "second-brain",
+    "obsidian",
+    "vault",
+    "scaffold",
+    "cli",
+    "para",
+    "zettelkasten"
+  ],
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@clack/prompts": "^1.6.0",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.0.0",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.9"
+  }
+}

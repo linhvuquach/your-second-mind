@@ -13,14 +13,14 @@ description: Break down work into actionable tasks and estimate timeline
 
 ## Status at a glance
 
-- **Done:** none
+- **Done:** M1 (Project scaffold) — completed 2026-06-21; verified via `typecheck` + `build` + `npm pack`
 - **In progress:** none
 - **Blocked:** none
-- **Not started:** all milestones M1–M8 below
+- **Not started:** M2–M8 below
 
 ## Milestones
 
-- [ ] **M1 — Project scaffold:** `package.json` (bin, ESM, engines, files), `tsconfig`, `tsup`, `vitest`, `src/`+`templates/`+`test/` skeleton
+- [x] **M1 — Project scaffold:** `package.json` (bin, ESM, engines, files), `tsconfig`, `tsup`, `vitest`, `src/`+`templates/`+`test/` skeleton
 - [ ] **M2 — Pure core:** `config.ts`, `variables.ts`, `render.ts` + unit tests (no FS)
 - [ ] **M3 — Templates extracted & parameterized:** schemas, vault, notes (6), `agents-workflow/` (2 commands + README)
 - [ ] **M4 — Scaffold writer:** dir creation + idempotent/force/dry-run file writing → `ScaffoldResult`
@@ -31,12 +31,12 @@ description: Break down work into actionable tasks and estimate timeline
 
 ## Task Breakdown
 
-### Phase 1 — Project scaffold (M1)
-- [ ] T1.1 `package.json`: `name: your-second-mind`, `type: module`, `bin: { "your-second-mind": "dist/cli.js" }`, `engines.node >=20`, `files: ["dist", "templates"]`, scripts (`build`, `dev`, `test`, `typecheck`), deps (`@clack/prompts`, `picocolors`), devDeps (`typescript`, `tsup`, `vitest`, `@types/node`)
-- [ ] T1.2 `tsconfig.json` (ESM, `moduleResolution: bundler`/`nodenext`, strict)
-- [ ] T1.3 `tsup.config.ts`: entry `src/cli.ts` → `dist/cli.js`, `format: esm`, `dts`, shebang banner (`#!/usr/bin/env node`)
-- [ ] T1.4 `vitest.config.ts`
-- [ ] T1.5 Create `src/`, `templates/{schemas,vault,notes,agents-workflow}/`, `test/{unit,integration}/` skeleton; `.gitignore` (`dist`, `node_modules`)
+### Phase 1 — Project scaffold (M1) — ✅ done 2026-06-21
+- [x] T1.1 `package.json`: `name: your-second-mind`, `type: module`, `bin: { "your-second-mind": "dist/cli.js" }`, `engines.node >=20`, `files: ["dist", "templates"]`, scripts (`build`, `dev`, `test`, `typecheck`), deps (`@clack/prompts`, `picocolors`), devDeps (`typescript`, `tsup`, `vitest`, `@types/node`) — versions pinned via `npm install`
+- [x] T1.2 `tsconfig.json` (ESM, `moduleResolution: bundler`, strict; added `ignoreDeprecations: "6.0"` for TS 6 `baseUrl` warning surfaced by tsup's dts step)
+- [x] T1.3 `tsup.config.ts`: entry `src/cli.ts` → `dist/cli.js`, `format: esm`, `dts`, shebang banner (`#!/usr/bin/env node`) — verified present in output
+- [x] T1.4 `vitest.config.ts` (added `passWithNoTests: true` so the empty skeleton keeps CI green until Phase 2 tests land)
+- [x] T1.5 Created `src/`, `templates/{schemas,vault,notes,agents-workflow}/`, `test/{unit,integration}/` skeleton (`.gitkeep` in empty leaves); `.gitignore` extended with `node_modules`, `dist`, `*.tsbuildinfo`. Added placeholder `src/cli.ts` (Node-version gate stub; replaced in Phase 5).
 
 ### Phase 2 — Pure core + unit tests (M2)
 - [ ] T2.1 `config.ts`: `Config`/`Agent` types, `DEFAULTS` (per requirements table), `resolve(flags, answers)` (layer defaults←flags←answers, expand `~` via `os.homedir()`), `validate()` (non-empty name, ≥1 area, ≥1 valid agent) → typed `ConfigError`

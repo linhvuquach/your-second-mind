@@ -1,0 +1,9 @@
+
+## Node / npm package
+node_modules/
+dist/
+*.tsbuildinfo
+
+## Custom
+prompts/
+.local/

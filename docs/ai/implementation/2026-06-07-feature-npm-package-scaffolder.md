@@ -26,6 +26,15 @@ node dist/cli.js --dry-run --name Alice   # local smoke run
 `package.json` essentials: `"type": "module"`, `"bin": { "your-second-mind": "dist/cli.js" }`,
 `"engines": { "node": ">=20" }`, `"files": ["dist", "templates"]`.
 
+**Build-config gotchas (found during M1):**
+- **TS 6 `baseUrl` deprecation breaks the dts build.** Under TypeScript 6.x, `tsup`'s dts step
+  fails with `TS5101: Option 'baseUrl' is deprecated` even though we never set `baseUrl` (the
+  rollup dts plugin injects it). Fix: add `"ignoreDeprecations": "6.0"` to `tsconfig`
+  `compilerOptions`.
+- **Empty test suite fails CI.** `vitest run` exits `1` when no test files exist. While the
+  skeleton has no tests (added in Phase 2+), set `test.passWithNoTests: true` in
+  `vitest.config.ts` to keep `npm test` / CI green; the real suites land before publish.
+
 ## Code Structure
 
 ```
