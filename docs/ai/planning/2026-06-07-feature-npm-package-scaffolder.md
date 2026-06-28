@@ -13,17 +13,17 @@ description: Break down work into actionable tasks and estimate timeline
 
 ## Status at a glance
 
-- **Done:** M1 (Project scaffold) — 2026-06-21; M2 (Pure core) — 2026-06-21; M3 (Templates) — 2026-06-21
+- **Done:** M1 (Project scaffold) — 2026-06-21; M2 (Pure core) — 2026-06-21; M3 (Templates) — 2026-06-21; M4 (Scaffold writer) — 2026-06-28
 - **In progress:** none
 - **Blocked:** none
-- **Not started:** M4–M8 below
+- **Not started:** M5–M8 below
 
 ## Milestones
 
 - [x] **M1 — Project scaffold:** `package.json` (bin, ESM, engines, files), `tsconfig`, `tsup`, `vitest`, `src/`+`templates/`+`test/` skeleton
 - [x] **M2 — Pure core:** `config.ts`, `variables.ts`, `render.ts` + unit tests (no FS)
 - [x] **M3 — Templates extracted & parameterized:** schemas, vault, notes (6), `agents-workflow/` (2 commands + README)
-- [ ] **M4 — Scaffold writer:** dir creation + idempotent/force/dry-run file writing → `ScaffoldResult`
+- [x] **M4 — Scaffold writer:** dir creation + idempotent/force/dry-run file writing → `ScaffoldResult`
 - [ ] **M5 — CLI surface:** `args.ts`, `prompts.ts`, `cli.ts`, `git.ts`, `ui.ts`
 - [ ] **M6 — Integration tests:** tmp-dir scaffold, no-`{{`-leak, personalization, partial-agents, dry-run, force
 - [ ] **M7 — Packaging & docs:** `files` whitelist, `npm pack` verification, root `README.md`, CI workflow
@@ -59,12 +59,14 @@ description: Break down work into actionable tasks and estimate timeline
 
 **Verification:** `grep -r "Linh\|linhvuquach\|engineering-craft" templates/` → CLEAN; 22 `{{VAR}}` placeholders all map to known variables; build + 42 tests pass.
 
-### Phase 4 — Scaffold writer (M4)
-- [ ] T4.1 `templates.ts`: `TEMPLATES_DIR` (`fileURLToPath(new URL("../templates", import.meta.url))`), `AGENT_FILES`, `NOTE_TEMPLATES` (all 6), `NAV_FILES`, `FOLDER_META`, `COMMAND_FILES`; read helpers
-- [ ] T4.2 `scaffold.ts` — dir creation: PARA folders, `area-<x>/`, `raw/<src>/`, `90-Meta/*`, `agents-workflow/`, `.gitkeep` in empty leaves
-- [ ] T4.3 `scaffold.ts` — file writing: agent schemas (only `config.agents`), nav files, one `_index.md` per folder (per-folder vars), all 6 note templates, `agents-workflow/*` **copied verbatim (no render)**
-- [ ] T4.4 Idempotency: per-file `[create]`/`[skip]`/`[overwrite]`; `force` flag; `ScaffoldResult {created, skipped, overwritten, tree}`
-- [ ] T4.5 `dryRun`: build tree, write nothing
+### Phase 4 — Scaffold writer (M4) — ✅ done 2026-06-28
+- [x] T4.1 `templates.ts`: `TEMPLATES_DIR` (`fileURLToPath(new URL("../templates", import.meta.url))`), `AGENT_FILES`, `NOTE_TEMPLATES` (all 6), `NAV_FILES`, `FOLDER_META`, `COMMAND_FILES`; `TOP_FOLDERS` const array; `readTemplate` helper
+- [x] T4.2 `scaffold.ts` — dir creation: PARA folders, `area-<x>/`, `raw/<src>/`, `90-Meta/{Templates,AI-Sessions}`, `agents-workflow/`, `.gitkeep` in empty leaves
+- [x] T4.3 `scaffold.ts` — file writing: agent schemas (only `config.agents`), nav files, one `_index.md` per folder (per-folder vars), all 6 note templates, `agents-workflow/*` **copied verbatim (no render)**
+- [x] T4.4 Idempotency: per-file `[create]`/`[skip]`/`[overwrite]`; `force` flag; `ScaffoldResult {created, skipped, overwritten, tree}`
+- [x] T4.5 `dryRun`: build tree, write nothing
+
+**Verification:** 93 tests pass (42 prior + 23 unit templates + 28 integration scaffold); typecheck clean; build clean. No `{{` leakage in rendered output confirmed by integration test.
 
 ### Phase 5 — CLI surface (M5)
 - [ ] T5.1 `args.ts`: `parseArgs` options (`--yes`, `--name`, `--role`, `--vault-path`, `--areas`, `--raw-sources`, `--agents`, `--no-git`, `--dry-run`, `--force`, `--help`, `--version`); map → `Partial<Config>` + run flags; comma-split lists; unknown-flag error

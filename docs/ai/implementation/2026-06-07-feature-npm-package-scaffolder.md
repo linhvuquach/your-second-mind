@@ -35,6 +35,13 @@ node dist/cli.js --dry-run --name Alice   # local smoke run
   skeleton has no tests (added in Phase 2+), set `test.passWithNoTests: true` in
   `vitest.config.ts` to keep `npm test` / CI green; the real suites land before publish.
 
+**Scaffold writer decisions (M4):**
+- **`TOP_FOLDERS` const array exported from `templates.ts`** — explicit order guaranteed; `TopFolder` union type derived via `as const`. `FOLDER_META` keyed on `TopFolder` so indexed access is always defined (avoids `| undefined` from `noUncheckedIndexedAccess`).
+- **`writeOne` stores relative paths in `result.tree`** via `path.relative(base, filePath)`, prefixed with `[create]`/`[skip]`/`[overwrite]`. CLI can echo `result.tree` directly.
+- **Dry-run increments `created` (same counter)** so `dryResult.created === realResult.created` — preview count matches actual write count.
+- **`.gitkeep` in empty leaf dirs**: `area-<x>/`, `raw/<src>/`, `90-Meta/AI-Sessions/` — empty after scaffolding; need `.gitkeep` for git tracking. Top-level PARA dirs and `90-Meta/Templates/` are NOT empty (have `_index.md` and templates respectively).
+- **Per-folder vars injected at write time** — `FOLDER_NAME`, `FOLDER_PATH`, `FOLDER_PURPOSE`, `FOLDER_AGENT_INSTRUCTION` merged into global vars before `renderTemplate` for each `_index.md` write. Not stored in `buildVariables`.
+
 **Template extraction decisions (M3):**
 - **`{{AREAS_LIST}}` used (not `{{AREAS_FOLDERS}}`)** in schema files (CLAUDE.md, cursorrules,
   AGENTS.md). The `AREAS_LIST` bullet format (`- area-x`) reads more naturally than the

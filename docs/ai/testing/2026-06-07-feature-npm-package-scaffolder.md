@@ -60,46 +60,82 @@ description: Define testing approach, test cases, and quality assurance
 - [ ] Unknown flag → error (non-zero path)
 - [ ] `--no-git` sets `gitInit: false`
 
+### `templates.test.ts` ✅ 23 tests passing (M4)
+- [x] `TEMPLATES_DIR` points to an existing directory
+- [x] `AGENT_FILES` maps each agent to correct dest filename (`CLAUDE.md`, `.cursorrules`, `AGENTS.md`)
+- [x] All agent template paths exist on disk
+- [x] `NOTE_TEMPLATES` has exactly 6 entries (all expected note types)
+- [x] All note template paths exist on disk
+- [x] `NAV_FILES` has exactly 4 entries (README.md, index.md, log.md, .gitignore)
+- [x] All nav template paths exist on disk
+- [x] `COMMAND_FILES` has exactly 3 entries (weekly-review.md, monthly-lint.md, README.md)
+- [x] All command file paths exist on disk
+- [x] `TOP_FOLDERS` has exactly 10 entries, starts with `00-Inbox`, ends with `90-Meta`
+- [x] `FOLDER_META` has an entry for every `TOP_FOLDER`
+- [x] Each `FOLDER_META` entry has non-empty `purpose` and `agentInstruction`
+- [x] `readTemplate` reads schema template containing `{{NAME}}`
+- [x] `readTemplate` reads `_index.md.tmpl` containing `{{FOLDER_NAME}}`
+- [x] `readTemplate` preserves Templater `<% tp.date.now` in note templates
+- [x] `readTemplate` preserves `$CURRENT_DATE` in command files
+
 ## Integration Tests (`test/integration/scaffold.test.ts`, vitest)
 
 Each case scaffolds into a unique tmp dir (`os.tmpdir()` + `fs.mkdtemp`), asserts, and cleans up. Runs against the **scaffold module** (and at least one case against the **built `dist/`** to catch template-path/bundling regressions).
 
-### Happy path — full default config
-- [ ] All expected PARA directories exist (00-Inbox … 90-Meta, `raw/*`, `area-*`, `agents-workflow/`)
-- [ ] `CLAUDE.md`, `.cursorrules`, `AGENTS.md` exist (all three agents default)
-- [ ] `README.md`, `index.md`, `log.md`, `.gitignore` exist
-- [ ] All 6 note templates exist in `90-Meta/Templates/`
-- [ ] One `_index.md` per top-level folder
-- [ ] **No `{{` in any generated file** (recursive scan)
+### scaffold.test.ts ✅ 28 tests passing (M4)
+
+#### Directory structure
+- [x] All 10 top-level PARA folders created (00-Inbox … 90-Meta)
+- [x] Area subfolders created under 30-Areas with `area-` prefix
+- [x] Raw source subfolders created under `raw/`
+- [x] Area folders excluded by config are not created
+- [x] `90-Meta/Templates` and `90-Meta/AI-Sessions` created
+- [x] `agents-workflow/` directory created
+
+#### Agent schema files
+- [x] `CLAUDE.md` written for `claude-code` agent
+- [x] `.cursorrules` written for `cursor` agent
+- [x] `AGENTS.md` written for `codex` agent
+- [x] `CLAUDE.md` absent when `claude-code` not in agents
+- [x] `.cursorrules` absent when `cursor` not in agents
+- [x] `CLAUDE.md` contains the configured name (renders `{{NAME}}`)
+
+#### Nav files
+- [x] `README.md`, `index.md`, `log.md`, `.gitignore` all written
+
+#### `_index.md` per folder
+- [x] `_index.md` written in every top-level PARA folder (10 files)
+- [x] `00-Inbox/_index.md` contains the folder name
+
+#### Note templates
+- [x] All 6 note templates written to `90-Meta/Templates/`
+- [x] Note templates preserve Templater `<% %>` syntax verbatim
+
+#### agents-workflow
+- [x] `weekly-review.md`, `monthly-lint.md`, `README.md` all written
+- [x] Command files preserve `$CURRENT_DATE` verbatim (not substituted)
+- [x] Command files contain no `{{` placeholders
+
+#### No `{{` leakage
+- [x] All rendered files scanned; no unreplaced `{{` found
+
+#### Idempotency
+- [x] Second run (no force) skips existing files; `skipped > 0`, `overwritten == 0`
+- [x] First run reports `created > 0`
+- [x] Second run with `--force` + different name overwrites; content updated; `overwritten > 0`
+- [x] `ScaffoldResult` has numeric `created`/`skipped`/`overwritten` and non-empty `tree` array
+
+#### Dry-run
+- [x] Writes nothing to disk (no dirs or files created)
+- [x] Returns non-empty tree containing `CLAUDE.md` and `README.md`
+- [x] Dry-run `created` count equals real-run `created` count
+
+### Remaining integration scenarios (M6 — after CLI surface)
 - [ ] With git on: `git log --oneline` ≥ 1 commit; `git status --porcelain` empty
-
-### Personalization completeness
-- [ ] `name: Alice`, `role: researcher`, `areas: [research, teaching]`, `agents: [cursor]` →
-      zero occurrences of `Linh`, `engineer`, `engineering-craft`, `/Users/linhvuquach` anywhere in the tree
-
-### Agent subsetting
-- [ ] `agents: [cursor]` → `.cursorrules` exists; `CLAUDE.md` and `AGENTS.md` absent
+- [ ] Personalization: `name: Alice, agents: [cursor]` → zero occurrences of `Linh`/`engineering-craft`/`/Users/linhvuquach`
 - [ ] `agents: [claude-code, codex]` → `CLAUDE.md` + `AGENTS.md` exist; `.cursorrules` absent
-
-### Templates always installed
-- [ ] All 6 note templates present regardless of config (no selection path exists)
-
-### Built-in commands (agents-workflow)
-- [ ] `agents-workflow/weekly-review.md`, `monthly-lint.md`, `README.md` always present
-- [ ] `weekly-review.md` / `monthly-lint.md` are **byte-identical** to the source templates (verbatim)
-- [ ] They still contain `$CURRENT_DATE` and `$ARGUMENTS` (not substituted), and no `{{`
-
-### Custom areas / raw sources
-- [ ] `areas: [research, writing]` → `30-Areas/area-research/`, `area-writing/`; no `area-engineering-craft/`
 - [ ] `raw_sources: [papers, datasets]` → `raw/papers/`, `raw/datasets/`; no `raw/articles/`
-
-### `--dry-run`
-- [ ] Exits 0, prints a tree containing expected paths, and the target dir does **not** exist afterward
-
-### Idempotency / `--force`
-- [ ] First run creates `CLAUDE.md` containing `Alice`
-- [ ] Re-run without `--force` skips it (content unchanged) and reports a skip count
-- [ ] Re-run with `--force` + `name: Bob` overwrites → contains `Bob`
+- [ ] Built-`dist/` template path test (catch bundling regressions)
 
 ### `--no-git`
 - [ ] No `.git/` directory created; exits 0
