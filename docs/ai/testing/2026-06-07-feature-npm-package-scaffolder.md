@@ -140,23 +140,32 @@ Each case scaffolds into a unique tmp dir (`os.tmpdir()` + `fs.mkdtemp`), assert
 - [x] Returns non-empty tree containing `CLAUDE.md` and `README.md`
 - [x] Dry-run `created` count equals real-run `created` count
 
-### Remaining integration scenarios (M6 — after CLI surface)
-- [ ] With git on: `git log --oneline` ≥ 1 commit; `git status --porcelain` empty
-- [ ] Personalization: `name: Alice, agents: [cursor]` → zero occurrences of `Linh`/`engineering-craft`/`/Users/linhvuquach`
-- [ ] `agents: [claude-code, codex]` → `CLAUDE.md` + `AGENTS.md` exist; `.cursorrules` absent
-- [ ] `raw_sources: [papers, datasets]` → `raw/papers/`, `raw/datasets/`; no `raw/articles/`
-- [ ] Built-`dist/` template path test (catch bundling regressions)
+### Remaining integration scenarios (M6) ✅ all done 2026-06-29
 
-### `--no-git`
-- [ ] No `.git/` directory created; exits 0
+#### `test/integration/scaffold.test.ts` additions (3 tests)
+- [x] Personalization: `name: Alice, areas:[research,writing], agents:[cursor]` → no `Linh`, `engineering-craft`, `linhvuquach` in any generated file
+- [x] `agents: [claude-code, codex]` → `CLAUDE.md` + `AGENTS.md` exist; `.cursorrules` absent
+- [x] `rawSources: [papers, datasets]` → `raw/papers/`, `raw/datasets/` exist; `raw/articles/` absent
+
+#### `test/integration/git.test.ts` (3 tests)
+- [x] `isGitAvailable()` returns a boolean
+- [x] `gitInit()` creates `.git/`, log ≥ 1 commit, `git status --porcelain` = empty
+- [x] No-git: `.git/` absent when `gitInit` not called
+
+#### `test/integration/cli.test.ts` (7 tests)
+- [x] `--version` exits 0 and prints semver string
+- [x] `--help` exits 0 and contains "Usage:" and "--dry-run"
+- [x] `--yes` without `--name` → exit 1, stderr contains "name"
+- [x] Unknown flag → exit 1, stderr contains flag name
+- [x] `--agents vim` → exit 1, stderr matches /vim|valid|agent/i
+- [x] `--yes --name Alice --no-git --dry-run` → exit 0, vault dir stays empty
+- [x] Template path from different CWD (os.tmpdir()) resolves via `import.meta.url` — CLAUDE.md written, no `{{` leakage
+
+#### Skipped (manual-only)
+- Node-version gate: requires patching `process.versions.node` in a subprocess — manual test only
+- `@clack` cancel (Ctrl-C): requires sending SIGINT mid-prompt — manual test only
 
 ## CLI / error-path tests
-
-- [ ] `--yes` without `--name` → non-zero exit; stderr mentions `name`
-- [ ] Invalid `--agents vim` → non-zero exit; stderr lists valid options
-- [ ] Node-version gate: simulated `process.versions.node` < 20 → non-zero exit, "Node 20+ required"
-- [ ] `@clack` cancel (Ctrl-C) before completion → non-zero exit, no files written
-- [ ] `--help` and `--version` exit 0 with expected output
 
 ## Packaging tests
 

@@ -13,10 +13,10 @@ description: Break down work into actionable tasks and estimate timeline
 
 ## Status at a glance
 
-- **Done:** M1 (Project scaffold) — 2026-06-21; M2 (Pure core) — 2026-06-21; M3 (Templates) — 2026-06-21; M4 (Scaffold writer) — 2026-06-28; M5 (CLI surface) — 2026-06-29
+- **Done:** M1 (Project scaffold) — 2026-06-21; M2 (Pure core) — 2026-06-21; M3 (Templates) — 2026-06-21; M4 (Scaffold writer) — 2026-06-28; M5 (CLI surface) — 2026-06-29; M6 (Integration tests) — 2026-06-29
 - **In progress:** none
 - **Blocked:** none
-- **Not started:** M6–M8 below
+- **Not started:** M7–M8 below
 
 ## Milestones
 
@@ -25,7 +25,7 @@ description: Break down work into actionable tasks and estimate timeline
 - [x] **M3 — Templates extracted & parameterized:** schemas, vault, notes (6), `agents-workflow/` (2 commands + README)
 - [x] **M4 — Scaffold writer:** dir creation + idempotent/force/dry-run file writing → `ScaffoldResult`
 - [x] **M5 — CLI surface:** `args.ts`, `prompts.ts`, `cli.ts`, `git.ts`, `ui.ts`
-- [ ] **M6 — Integration tests:** tmp-dir scaffold, no-`{{`-leak, personalization, partial-agents, dry-run, force
+- [x] **M6 — Integration tests:** tmp-dir scaffold, no-`{{`-leak, personalization, partial-agents, dry-run, force
 - [ ] **M7 — Packaging & docs:** `files` whitelist, `npm pack` verification, root `README.md`, CI workflow
 - [ ] **M8 — Publish:** confirm name availability, `npm publish`, smoke-test `npx your-second-mind@latest`
 
@@ -78,8 +78,12 @@ description: Break down work into actionable tasks and estimate timeline
 
 **Verification:** 110 tests pass (93 prior + 17 args unit); typecheck clean; tsup build clean (16.24 KB bundle + 0.013 KB d.ts). All smoke cases verified.
 
-### Phase 6 — Integration tests (M6)
-- [ ] T6.1 `test/integration/scaffold.test.ts`: scaffold into a tmp dir; assert tree, **no `{{` leakage**, personalization (`name: Alice, agents:[cursor]` → no `Linh`/`engineering-craft`/`/Users/linhvuquach`), partial-agents (only `.cursorrules`), all 6 templates present, `agents-workflow/` always present + verbatim, dry-run writes nothing, force overwrites, re-run skips
+### Phase 6 — Integration tests (M6) — ✅ done 2026-06-29
+- [x] T6.1 scaffold.test.ts additions: personalization (`name: Alice, areas:[research,writing], agents:[cursor]` → no `Linh`/`engineering-craft`), full agent subsetting `[claude-code, codex]`, raw sources `[papers, datasets]`
+- [x] T6.2 `test/integration/git.test.ts`: isGitAvailable returns boolean; gitInit creates .git + initial commit + clean status; no-git: .git absent when not called
+- [x] T6.3 `test/integration/cli.test.ts`: --version, --help, --yes without name → exit 1, unknown flag → exit 1, invalid agent → exit 1, dry-run writes nothing, template path from different CWD resolves via import.meta.url
+
+**Verification:** 123 tests pass; typecheck clean.
 
 ### Phase 7 — Packaging & docs (M7)
 - [ ] T7.1 Verify `npm pack` tarball includes `dist/` + `templates/`, excludes source/tests, no personal strings

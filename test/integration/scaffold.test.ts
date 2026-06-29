@@ -258,6 +258,57 @@ describe("scaffold — agents-workflow", () => {
   });
 });
 
+// ── Personalization (M6) ──────────────────────────────────────────────────────
+
+describe("scaffold — personalization", () => {
+  it("contains no personal values from the original author", () => {
+    const [dir, cleanup] = tmpDir();
+    try {
+      const cfg = makeConfig(dir, { name: "Alice", agents: ["cursor"], areas: ["research", "writing"] });
+      scaffold(cfg, buildVariables(cfg, TEST_DATE));
+      const files = collectFiles(dir);
+      const PERSONAL = ["Linh", "linhvuquach", "engineering-craft"];
+      for (const rel of files) {
+        if (rel.endsWith(".gitkeep")) continue;
+        const content = fs.readFileSync(path.join(dir, rel), "utf8");
+        for (const pattern of PERSONAL) {
+          expect(content, `"${pattern}" found in ${rel}`).not.toContain(pattern);
+        }
+      }
+    } finally { cleanup(); }
+  });
+});
+
+// ── Full agent subsetting (M6) ────────────────────────────────────────────────
+
+describe("scaffold — full agent subsetting", () => {
+  it("agents [claude-code, codex]: CLAUDE.md + AGENTS.md present; .cursorrules absent", () => {
+    const [dir, cleanup] = tmpDir();
+    try {
+      const cfg = makeConfig(dir, { agents: ["claude-code", "codex"] });
+      scaffold(cfg, buildVariables(cfg, TEST_DATE));
+      expect(fs.existsSync(path.join(dir, "CLAUDE.md"))).toBe(true);
+      expect(fs.existsSync(path.join(dir, "AGENTS.md"))).toBe(true);
+      expect(fs.existsSync(path.join(dir, ".cursorrules"))).toBe(false);
+    } finally { cleanup(); }
+  });
+});
+
+// ── Raw sources (M6) ──────────────────────────────────────────────────────────
+
+describe("scaffold — raw sources", () => {
+  it("custom rawSources create expected dirs; default dirs absent", () => {
+    const [dir, cleanup] = tmpDir();
+    try {
+      const cfg = makeConfig(dir, { rawSources: ["papers", "datasets"] });
+      scaffold(cfg, buildVariables(cfg, TEST_DATE));
+      expect(fs.existsSync(path.join(dir, "raw", "papers"))).toBe(true);
+      expect(fs.existsSync(path.join(dir, "raw", "datasets"))).toBe(true);
+      expect(fs.existsSync(path.join(dir, "raw", "articles"))).toBe(false);
+    } finally { cleanup(); }
+  });
+});
+
 // ── No {{ leakage ──────────────────────────────────────────────────────────────
 
 describe("scaffold — no {{ leakage in rendered files", () => {
