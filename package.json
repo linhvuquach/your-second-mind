@@ -29,6 +29,10 @@
     "zettelkasten"
   ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/linhvuquach/your-second-mind.git"
+  },
   "publishConfig": {
     "access": "public"
   },
