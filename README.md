@@ -1,5 +1,9 @@
 # your-second-mind
 
+[![npm version](https://img.shields.io/npm/v/your-second-mind)](https://www.npmjs.com/package/your-second-mind)
+[![npm downloads](https://img.shields.io/npm/dm/your-second-mind)](https://www.npmjs.com/package/your-second-mind)
+[![license](https://img.shields.io/npm/l/your-second-mind)](LICENSE)
+
 Scaffold a personalized, agent-ready [second brain](https://www.buildingasecondbrain.com/) Obsidian vault in under a minute.
 
 ```
