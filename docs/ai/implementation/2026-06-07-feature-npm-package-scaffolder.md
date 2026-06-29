@@ -35,6 +35,13 @@ node dist/cli.js --dry-run --name Alice   # local smoke run
   skeleton has no tests (added in Phase 2+), set `test.passWithNoTests: true` in
   `vitest.config.ts` to keep `npm test` / CI green; the real suites land before publish.
 
+**CLI surface decisions (M5):**
+- **`parseCliArgs(argv?)` accepts an optional `argv` array** — defaults to `process.argv.slice(2)` but accepts any array for unit testing without spawning a subprocess. This is the key testability seam.
+- **`guardCancel` lives in `prompts.ts`** (not `cli.ts`) — each prompt guards itself immediately; by the time `runPrompts()` returns, cancels have already exited the process. No cancel handling needed in `cli.ts`.
+- **Unknown flags are caught in `cli.ts` via a try/catch around `parseCliArgs()`** (not inside `args.ts`) — keeps `args.ts` purely declarative; the error message is written to stderr and exits 1.
+- **tsup takes ~430ms but was backgrounded by the shell tool when run without an explicit timeout.** Always use `timeout 120 ./node_modules/.bin/tsup` or `npm run build` with `--timeout` in CI. Build produces a 16.24 KB bundled ESM file + 0.013 KB `.d.ts`.
+- **`createRequire` for `package.json` version** — ESM can't use `import pkg from '../package.json' assert { type: 'json' }` consistently across all environments; `createRequire(import.meta.url)` is the stable path and works in the tsup bundle.
+
 **Scaffold writer decisions (M4):**
 - **`TOP_FOLDERS` const array exported from `templates.ts`** — explicit order guaranteed; `TopFolder` union type derived via `as const`. `FOLDER_META` keyed on `TopFolder` so indexed access is always defined (avoids `| undefined` from `noUncheckedIndexedAccess`).
 - **`writeOne` stores relative paths in `result.tree`** via `path.relative(base, filePath)`, prefixed with `[create]`/`[skip]`/`[overwrite]`. CLI can echo `result.tree` directly.

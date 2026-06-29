@@ -13,10 +13,10 @@ description: Break down work into actionable tasks and estimate timeline
 
 ## Status at a glance
 
-- **Done:** M1 (Project scaffold) — 2026-06-21; M2 (Pure core) — 2026-06-21; M3 (Templates) — 2026-06-21; M4 (Scaffold writer) — 2026-06-28
+- **Done:** M1 (Project scaffold) — 2026-06-21; M2 (Pure core) — 2026-06-21; M3 (Templates) — 2026-06-21; M4 (Scaffold writer) — 2026-06-28; M5 (CLI surface) — 2026-06-29
 - **In progress:** none
 - **Blocked:** none
-- **Not started:** M5–M8 below
+- **Not started:** M6–M8 below
 
 ## Milestones
 
@@ -24,7 +24,7 @@ description: Break down work into actionable tasks and estimate timeline
 - [x] **M2 — Pure core:** `config.ts`, `variables.ts`, `render.ts` + unit tests (no FS)
 - [x] **M3 — Templates extracted & parameterized:** schemas, vault, notes (6), `agents-workflow/` (2 commands + README)
 - [x] **M4 — Scaffold writer:** dir creation + idempotent/force/dry-run file writing → `ScaffoldResult`
-- [ ] **M5 — CLI surface:** `args.ts`, `prompts.ts`, `cli.ts`, `git.ts`, `ui.ts`
+- [x] **M5 — CLI surface:** `args.ts`, `prompts.ts`, `cli.ts`, `git.ts`, `ui.ts`
 - [ ] **M6 — Integration tests:** tmp-dir scaffold, no-`{{`-leak, personalization, partial-agents, dry-run, force
 - [ ] **M7 — Packaging & docs:** `files` whitelist, `npm pack` verification, root `README.md`, CI workflow
 - [ ] **M8 — Publish:** confirm name availability, `npm publish`, smoke-test `npx your-second-mind@latest`
@@ -68,13 +68,15 @@ description: Break down work into actionable tasks and estimate timeline
 
 **Verification:** 93 tests pass (42 prior + 23 unit templates + 28 integration scaffold); typecheck clean; build clean. No `{{` leakage in rendered output confirmed by integration test.
 
-### Phase 5 — CLI surface (M5)
-- [ ] T5.1 `args.ts`: `parseArgs` options (`--yes`, `--name`, `--role`, `--vault-path`, `--areas`, `--raw-sources`, `--agents`, `--no-git`, `--dry-run`, `--force`, `--help`, `--version`); map → `Partial<Config>` + run flags; comma-split lists; unknown-flag error
-- [ ] T5.2 `prompts.ts`: `@clack` intro + grouped prompts (text, multiselect for agents/areas, confirm git) with defaults; `isCancel` → exit 1
-- [ ] T5.3 `git.ts`: `isGitAvailable()`, `gitInit()` (init/add/commit); missing-git non-fatal
-- [ ] T5.4 `ui.ts`: picocolors status lines, summary, `@clack` outro with next-steps (open Obsidian; copy a command from `agents-workflow/`)
-- [ ] T5.5 `cli.ts`: `main()` — Node≥20 gate → parseArgs → help/version → interactive vs `--yes` → resolve/validate → scaffold → optional gitInit → summary; try/catch maps `ConfigError`/cancel to clean exit codes
-- [ ] T5.6 Manual smoke: `node dist/cli.js --dry-run`; real run into a temp dir; `grep -r "{{" <vault>` empty
+### Phase 5 — CLI surface (M5) — ✅ done 2026-06-29
+- [x] T5.1 `args.ts`: `parseArgs` options (`--yes`, `--name`, `--role`, `--vault-path`, `--areas`, `--raw-sources`, `--agents`, `--no-git`, `--dry-run`, `--force`, `--help`, `--version`); map → `Partial<Config>` + run flags; comma-split lists; unknown-flag error
+- [x] T5.2 `prompts.ts`: `@clack` intro + grouped prompts (text, multiselect for agents/areas, confirm git) with defaults; `isCancel`/`cancel` → exit 1
+- [x] T5.3 `git.ts`: `isGitAvailable()`, `gitInit()` (init/add/commit); missing-git non-fatal
+- [x] T5.4 `ui.ts`: picocolors status lines, summary, `@clack` outro with next-steps (open Obsidian; copy a command from `agents-workflow/`)
+- [x] T5.5 `cli.ts`: `main()` — Node≥20 gate → parseArgs → help/version → interactive vs `--yes` → resolve/validate → scaffold → optional gitInit → summary; try/catch maps `ConfigError` to clean exit codes
+- [x] T5.6 Manual smoke: `node dist/cli.js --dry-run`; real run into a temp dir; `grep -r "{{" <vault>` = 0 leaks; `--yes` without `--name` → exit 1; unknown flag → exit 1
+
+**Verification:** 110 tests pass (93 prior + 17 args unit); typecheck clean; tsup build clean (16.24 KB bundle + 0.013 KB d.ts). All smoke cases verified.
 
 ### Phase 6 — Integration tests (M6)
 - [ ] T6.1 `test/integration/scaffold.test.ts`: scaffold into a tmp dir; assert tree, **no `{{` leakage**, personalization (`name: Alice, agents:[cursor]` → no `Linh`/`engineering-craft`/`/Users/linhvuquach`), partial-agents (only `.cursorrules`), all 6 templates present, `agents-workflow/` always present + verbatim, dry-run writes nothing, force overwrites, re-run skips

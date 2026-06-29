@@ -54,11 +54,21 @@ description: Define testing approach, test cases, and quality assurance
 - [x] `validate()` throws `ConfigError` for unrecognised agent string
 - [x] Minimal valid config passes without throwing
 
-### `args.test.ts`
-- [ ] Parses booleans (`--yes`, `--dry-run`, `--force`, `--no-git`) and strings (`--name`, `--vault-path`)
-- [ ] Comma-splits list flags (`--areas a,b,c` → `["a","b","c"]`, `--agents claude-code,cursor`)
-- [ ] Unknown flag → error (non-zero path)
-- [ ] `--no-git` sets `gitInit: false`
+### `args.test.ts` ✅ 17 tests passing (M5)
+- [x] Parses `--yes` and `-y` short form as `runFlags.yes=true`
+- [x] Parses `--dry-run` / `--force` / `--no-git` booleans
+- [x] All flags default to `false` with no args
+- [x] Parses `--name` → `partialConfig.name`
+- [x] Parses `--vault-path` → `partialConfig.vaultPath`
+- [x] Parses `--role` → `partialConfig.role`
+- [x] `partialConfig` is empty when no config flags provided
+- [x] Comma-splits `--areas` → string array
+- [x] Comma-splits `--agents` → Agent array
+- [x] Comma-splits `--raw-sources` → string array
+- [x] Trims whitespace from comma-split items
+- [x] `--no-git` sets `partialConfig.gitInit=false`
+- [x] Absent `--no-git` leaves `partialConfig.gitInit` undefined
+- [x] Unknown flag throws (strict mode)
 
 ### `templates.test.ts` ✅ 23 tests passing (M4)
 - [x] `TEMPLATES_DIR` points to an existing directory
