@@ -13,10 +13,10 @@ description: Break down work into actionable tasks and estimate timeline
 
 ## Status at a glance
 
-- **Done:** M1 (Project scaffold) — 2026-06-21; M2 (Pure core) — 2026-06-21; M3 (Templates) — 2026-06-21; M4 (Scaffold writer) — 2026-06-28; M5 (CLI surface) — 2026-06-29; M6 (Integration tests) — 2026-06-29
+- **Done:** M1 (Project scaffold) — 2026-06-21; M2 (Pure core) — 2026-06-21; M3 (Templates) — 2026-06-21; M4 (Scaffold writer) — 2026-06-28; M5 (CLI surface) — 2026-06-29; M6 (Integration tests) — 2026-06-29; M7 (Packaging & docs) — 2026-06-29
 - **In progress:** none
 - **Blocked:** none
-- **Not started:** M7–M8 below
+- **Not started:** M8 below
 
 ## Milestones
 
@@ -26,7 +26,7 @@ description: Break down work into actionable tasks and estimate timeline
 - [x] **M4 — Scaffold writer:** dir creation + idempotent/force/dry-run file writing → `ScaffoldResult`
 - [x] **M5 — CLI surface:** `args.ts`, `prompts.ts`, `cli.ts`, `git.ts`, `ui.ts`
 - [x] **M6 — Integration tests:** tmp-dir scaffold, no-`{{`-leak, personalization, partial-agents, dry-run, force
-- [ ] **M7 — Packaging & docs:** `files` whitelist, `npm pack` verification, root `README.md`, CI workflow
+- [x] **M7 — Packaging & docs:** `files` whitelist, `npm pack` verification, root `README.md`, CI workflow
 - [ ] **M8 — Publish:** confirm name availability, `npm publish`, smoke-test `npx your-second-mind@latest`
 
 ## Task Breakdown
@@ -85,10 +85,12 @@ description: Break down work into actionable tasks and estimate timeline
 
 **Verification:** 123 tests pass; typecheck clean.
 
-### Phase 7 — Packaging & docs (M7)
-- [ ] T7.1 Verify `npm pack` tarball includes `dist/` + `templates/`, excludes source/tests, no personal strings
-- [ ] T7.2 Root `README.md`: what it is, `npx your-second-mind@latest` quick start, what you get, flags table, multi-agent note, post-setup links
-- [ ] T7.3 CI workflow: `typecheck` + `test` + `build` on PR; `npm publish` on tag (`NODE_AUTH_TOKEN`)
+### Phase 7 — Packaging & docs (M7) — ✅ done 2026-06-29
+- [x] T7.1 Verify `npm pack` tarball includes `dist/` + `templates/`, excludes source/tests, no personal strings; smoke-test install from packed tarball into a tmp dir from a different CWD → vault scaffolds correctly
+- [x] T7.2 Root `README.md`: what it is, `npx your-second-mind@latest` quick start, what you get, flags table, multi-agent note, post-setup links
+- [x] T7.3 CI workflow: `.github/workflows/ci.yml` (typecheck + test + build on push/PR to main); `.github/workflows/publish.yml` (same gates + `npm publish --provenance` on `v*` tag via `NODE_AUTH_TOKEN` secret)
+
+**Verification:** `npm pack --dry-run` lists `dist/` + `templates/` + `package.json` only (25 files, 20.8 KB packed). No `Linh`/`linhvuquach` strings. Tarball smoke-test: installed into `/tmp/ysm-smoke-*`, ran from different CWD → 24 files created, CLAUDE.md contains name, no `{{` leakage. 123 tests still passing.
 
 ### Phase 8 — Publish (M8)
 - [ ] T8.1 Confirm `your-second-mind` availability on npm (decide scope/license)

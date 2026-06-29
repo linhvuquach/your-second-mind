@@ -167,11 +167,11 @@ Each case scaffolds into a unique tmp dir (`os.tmpdir()` + `fs.mkdtemp`), assert
 
 ## CLI / error-path tests
 
-## Packaging tests
+## Packaging tests — ✅ done 2026-06-29
 
-- [ ] `npm pack` tarball includes `dist/` and `templates/`, excludes `src/`/`test/`
-- [ ] No personal strings (`Linh`, `/Users/linhvuquach`) anywhere in the tarball
-- [ ] Smoke: install the packed tarball into a temp project and run the bin from a **different CWD** → vault scaffolds correctly (template path resolves via `import.meta.url`, not CWD)
+- [x] `npm pack` tarball includes `dist/` and `templates/`, excludes `src/`/`test/`; 25 files, 20.8 KB packed
+- [x] No personal strings (`Linh`, `/Users/linhvuquach`) anywhere in the tarball
+- [x] Smoke: install the packed tarball into a temp project and run the bin from a **different CWD** (`/tmp`) → vault scaffolds correctly (template path resolves via `import.meta.url`, not CWD)
 
 ## Test Data (fixtures)
 
