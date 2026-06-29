@@ -1,6 +1,6 @@
 {
   "name": "your-second-mind",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Scaffold a personalized, agent-ready second-brain Obsidian vault in seconds.",
   "type": "module",
   "bin": {
